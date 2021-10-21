@@ -22,11 +22,14 @@ class AuthVC: UIViewController, CAAnimationDelegate {
     
     private func autorize() {
         let url = configureURLForAutorize()
+        print("")
         loadWebView(from: url)
     }
     
     private func loadWebView(from url: URL?) {
-        guard let url = url else { return }
+        guard let url = url else { return
+            
+        }
         let request = URLRequest(url: url)
         self.webView.load(request)
     }
@@ -36,7 +39,7 @@ class AuthVC: UIViewController, CAAnimationDelegate {
         urlComponent.scheme = "https"
         urlComponent.host = "oauth.vk.com"
         urlComponent.path = "/authorize"
-        urlComponent.queryItems = [URLQueryItem(name: "client_id", value: "7978364"),
+        urlComponent.queryItems = [URLQueryItem(name: "client_id", value: "7974885"),
                                    URLQueryItem(name: "display", value: "mobile"),
                                    URLQueryItem(name: "redirect_uri", value: "https://oauth.vk.com/blank.html"),
                                    URLQueryItem(name: "scope", value: "262150"),
@@ -79,8 +82,8 @@ extension AuthVC: WKNavigationDelegate {
         Session.shared.userId = Int(userId)
         
         decisionHandler(.cancel)
-        
         showMenu()
+        webView.stopLoading()
     }
 }
 

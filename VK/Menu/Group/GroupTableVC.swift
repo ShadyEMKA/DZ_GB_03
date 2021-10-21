@@ -9,38 +9,61 @@ import UIKit
 
 class GroupTableVC: UITableViewController {
     
-    var groups: [Group] = [Group(name: "GeekBrains", avatar: UIImage(named: "GB"))]
+    private let fetcher = NetworkDataFetcher()
+    private var groups = [GroupModel]()
+    private var filtredGroups = [GroupModel]()
+    private var isFiltred: Bool = false
     
-    private var filteredGroup: [Group] = []
+    lazy private var refreshControlGroup: UIRefreshControl = {
+        let refreshControlGroup = UIRefreshControl()
+        refreshControlGroup.addTarget(self, action: #selector(refresh), for: .valueChanged)
+        return refreshControlGroup
+    }()
     
-    private let searchController = UISearchController(searchResultsController: nil)
-    
-    private var searchBarIsEmpty: Bool {
-        guard let text = searchController.searchBar.text else { return false }
-        return text.isEmpty
-    }
-    private var isFiltered: Bool {
-        return searchController.isActive && !searchBarIsEmpty
-    }
+    lazy private var titleView: TitleView = {
+        let titleView = TitleView()
+        titleView.translatesAutoresizingMaskIntoConstraints = false
+        titleView.searchView.dataSource = self
+        return titleView
+    }()
         
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        addButtonSearch()
-        configureSearchController()
+        configure()
+        loadingGroups()
     }
     
-    private func configureSearchController() {
-        searchController.searchResultsUpdater = self
-        searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Поиск"
-        navigationItem.searchController = searchController
-        definesPresentationContext = true
+    private func configure() {
+        
+        tableView.addSubview(refreshControlGroup)
+        tableView.separatorStyle = .none
+        tableView.contentInset.top = CGFloat(10)
+        
+        navigationController?.hidesBarsOnSwipe = true
+        navigationItem.titleView = titleView
+    }
+    
+    private func loadingGroups() {
+        
+        fetcher.getGroups { response in
+            self.groups = response.items.compactMap({ group in
+                GroupModel(name: group.name, avatar: group.photo100)
+            })
+            self.tableView.reloadData()
+        }
+        refreshControlGroup.endRefreshing()
+    }
+    
+    @objc private func refresh() {
+        
+        loadingGroups()
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltered {
-            return filteredGroup.count
+        
+        if isFiltred {
+            return filtredGroups.count
         }
         return groups.count
     }
@@ -52,55 +75,34 @@ class GroupTableVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if let newVC = cell as? GroupTableViewCell {
-            let group: Group
-            if isFiltered {
-                group = filteredGroup[indexPath.row]
-            } else {
-                group = groups[indexPath.row]
-            }
+            let group = isFiltred ? filtredGroups[indexPath.row] : groups[indexPath.row]
             newVC.set(avatar: group.avatar, name: group.name)
         }
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
-        switch editingStyle {
-        case .delete:
-            groups.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        default:
-            break
+        if isFiltred {
+            return "Найдено групп - \(filtredGroups.count)"
         }
-    }
-    
-    private func addButtonSearch() {
-        let button = UIBarButtonItem(image: UIImage(systemName: "plus.circle"), style: .done, target: self, action: #selector(pressedSearch))
-        button.tintColor = .black
-        self.navigationItem.rightBarButtonItem = button
-    }
-    
-    @objc private func pressedSearch() {
-        let storyBoard = Constants.Storyboard.searchGroup
-        let vc = storyBoard.instantiateInitialViewController()
-        if let newVC = vc as? SearchGroupTableVC {
-            newVC.title = "Поиск"
-            self.navigationController?.pushViewController(newVC, animated: true)
-        }
+        return "Всего групп - \(groups.count)"
     }
 }
 
-extension GroupTableVC: UISearchResultsUpdating {
+extension GroupTableVC: SearchTextFieldDelegate {
     
-    func updateSearchResults(for searchController: UISearchController) {
-        filterContentForSearchText(searchController.searchBar.text!)
-    }
-    
-    private func filterContentForSearchText(_ searchText: String) {
-        filteredGroup = groups.filter() { value in
-            value.name.lowercased().contains(searchText.lowercased())
-        }
+    func didChangeSearch(_ text: String?) {
+        
+        guard let text = text else { return }
+        
+        fetcher.getGroupsSearch(from: text, completion: { groups in
+            self.filtredGroups = groups.items.compactMap({ group in
+                GroupModel(name: group.name, avatar: group.photo100)
+            })
+        })
+        
+        isFiltred = text != "" ? true : false
         tableView.reloadData()
     }
-    
 }
 
