@@ -9,21 +9,19 @@ import UIKit
 
 class GroupTableViewCell: UITableViewCell {
 
-    @IBOutlet private weak var avatarImage: UIImageView!
+    @IBOutlet private weak var avatarImage: WebImageView!
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var shadowView: UIView!
     
     override func awakeFromNib() {
         super.awakeFromNib()
        
-        configureAvatar()
+        self.avatarImage.contentMode = .scaleAspectFill
     }
     
-    private func configureAvatar() {
+    override func layoutSubviews() {
         
-        self.avatarImage.contentMode = .scaleAspectFill
         self.avatarImage.layer.cornerRadius = self.avatarImage.frame.width / 2
-        
         self.shadowView.layer.cornerRadius = self.shadowView.frame.width / 2
         self.shadowView.layer.shadowColor = UIColor.black.cgColor
         self.shadowView.layer.shadowOffset = .zero
@@ -31,9 +29,9 @@ class GroupTableViewCell: UITableViewCell {
         self.shadowView.layer.shadowOpacity = 0.8
     }
     
-    func set(avatar: UIImage?, name: String) {
+    func set(avatar: String, name: String) {
         
-        self.avatarImage.image = avatar
+        self.avatarImage.set(urlString: avatar)
         self.nameLabel.text = name
     }
 
