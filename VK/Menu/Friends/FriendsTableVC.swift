@@ -36,11 +36,11 @@ class FriendsTableVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     private func loadingFriends() {
         
-        fetcher.getFriends { response in
-            self.friends = response.items.compactMap { friend in
-                FriendModel(name: friend.fullName, avatar: friend.photo100, status: friend.online)
+        fetcher.getFriends { [weak self] response in
+            self?.friends = response.items.compactMap { friend in
+                FriendModel(name: friend.fullName, avatar: friend.photo100, status: friend.online, id: friend.id)
             }
-            self.tableView.reloadData()
+            self?.tableView.reloadData()
         }
         refreshControlFriends.endRefreshing()
     }
@@ -68,5 +68,13 @@ class FriendsTableVC: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return "Всего друзей - \(friends.count)"
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if let newVC = Constants.Storyboard.photoFriend.instantiateInitialViewController() as? PhotoFriendVC {
+            newVC.setId(id: friends[indexPath.row].id)
+            self.navigationController?.pushViewController(newVC, animated: true)
+        }
     }
 }

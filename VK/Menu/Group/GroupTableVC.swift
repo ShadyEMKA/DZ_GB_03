@@ -46,11 +46,11 @@ class GroupTableVC: UITableViewController {
     
     private func loadingGroups() {
         
-        fetcher.getGroups { response in
-            self.groups = response.items.compactMap({ group in
+        fetcher.getGroups { [weak self] response in
+            self?.groups = response.items.compactMap({ group in
                 GroupModel(name: group.name, avatar: group.photo100)
             })
-            self.tableView.reloadData()
+            self?.tableView.reloadData()
         }
         refreshControlGroup.endRefreshing()
     }
@@ -95,8 +95,8 @@ extension GroupTableVC: SearchTextFieldDelegate {
         
         guard let text = text else { return }
         
-        fetcher.getGroupsSearch(from: text, completion: { groups in
-            self.filtredGroups = groups.items.compactMap({ group in
+        fetcher.getGroupsSearch(from: text, completion: { [weak self] groups in
+            self?.filtredGroups = groups.items.compactMap({ group in
                 GroupModel(name: group.name, avatar: group.photo100)
             })
         })

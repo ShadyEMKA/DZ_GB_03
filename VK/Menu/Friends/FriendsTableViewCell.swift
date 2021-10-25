@@ -20,6 +20,12 @@ class FriendsTableViewCell: UITableViewCell {
         self.avatarImage.contentMode = .scaleAspectFill
     }
     
+    override func prepareForReuse() {
+        avatarImage.image = nil
+        nameLabel.text = nil
+        statusLabel.text = nil
+    }
+    
     override func layoutSubviews() {
         
         self.avatarImage.layer.cornerRadius = self.avatarImage.frame.width / 2

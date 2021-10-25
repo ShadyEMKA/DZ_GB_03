@@ -12,4 +12,5 @@ struct FriendModel {
     let name: String
     let avatar: String
     let status: Int
+    let id: Int
 }
