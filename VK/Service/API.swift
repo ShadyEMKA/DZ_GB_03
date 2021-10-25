@@ -11,6 +11,7 @@ struct API {
     static let scheme = "https"
     static let host = "api.vk.com"
     static let friendsGet = "/method/friends.get"
+    static let photosGet = "/method/photos.get"
     static let groupsGet = "/method/groups.get"
     static let usersGet = "/method/users.get"
     static let searchGetHints = "/method/search.getHints"

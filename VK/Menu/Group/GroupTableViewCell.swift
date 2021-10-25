@@ -19,6 +19,12 @@ class GroupTableViewCell: UITableViewCell {
         self.avatarImage.contentMode = .scaleAspectFill
     }
     
+    override func prepareForReuse() {
+        
+        avatarImage.image = nil
+        nameLabel.text = nil
+    }
+    
     override func layoutSubviews() {
         
         self.avatarImage.layer.cornerRadius = self.avatarImage.frame.width / 2
@@ -30,7 +36,7 @@ class GroupTableViewCell: UITableViewCell {
     }
     
     func set(avatar: String, name: String) {
-        
+
         self.avatarImage.set(urlString: avatar)
         self.nameLabel.text = name
     }

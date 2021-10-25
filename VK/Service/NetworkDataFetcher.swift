@@ -13,7 +13,7 @@ final class NetworkDataFetcher {
     
     func getFriends(completion: @escaping (FriendsResponse) -> Void) {
         
-        let param = ["fields":"nickname,photo_100,online", "order": "name"]
+        let param = ["fields":"nickname,photo_100,online,id", "order": "name"]
         networkManager.getRequest(from: API.friendsGet, param: param) { data, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -59,6 +59,19 @@ final class NetworkDataFetcher {
                 return
             }
             guard let decode = self.decodeJSON(type: GroupsResponseWrapped.self, data: data) else { return }
+            completion(decode.response)
+        }
+    }
+    
+    func getPhotos(from userId: Int, completion: @escaping (PhotosResponse) -> Void) {
+        
+        let param = ["owner_id": String(userId), "album_id": "profile", "rev": "1"]
+        networkManager.getRequest(from: API.photosGet, param: param) { data, error in
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            guard let decode = self.decodeJSON(type: PhotosResponseWrapped.self, data: data) else { return }
             completion(decode.response)
         }
     }
