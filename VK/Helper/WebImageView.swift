@@ -31,18 +31,20 @@ class WebImageView: UIImageView {
         }
         
         let session = URLSession(configuration: .default)
-        session.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
-            }
-            guard let data = data,
-            let response = response else { return }
-            
-            DispatchQueue.main.async {
-                self.loadedToCashe(for: data, response: response)
-            }
-        }.resume()
+        DispatchQueue.global(qos: .userInteractive).async {
+            session.dataTask(with: url) { data, response, error in
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+                guard let data = data,
+                let response = response else { return }
+                
+                DispatchQueue.main.async {
+                    self.loadedToCashe(for: data, response: response)
+                }
+            }.resume()
+        }
     }
     
     private func loadedToCashe(for data: Data, response: URLResponse) {

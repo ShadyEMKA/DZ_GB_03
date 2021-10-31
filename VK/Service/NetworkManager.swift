@@ -16,9 +16,7 @@ final class NetworkManager {
         guard let url = urlConfigure(from: path, param: param) else { return }
         let session = URLSession(configuration: .default)
         session.dataTask(with: url) { data, response, error in
-            DispatchQueue.main.async {
-                completion(data, error)
-            }
+            completion(data, error)
         }.resume()
     }
     

@@ -17,13 +17,14 @@ class AuthVC: UIViewController, CAAnimationDelegate {
         
         self.webView.navigationDelegate = self
         
-        autorize()
+//        autorize()
+        showMenu()
     }
     
     private func autorize() {
         let url = configureURLForAutorize()
-        print("")
         loadWebView(from: url)
+        
     }
     
     private func loadWebView(from url: URL?) {

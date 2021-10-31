@@ -48,11 +48,13 @@ class GroupTableVC: UITableViewController {
         
         fetcher.getGroups { [weak self] response in
             self?.groups = response.items.compactMap({ group in
-                GroupModel(name: group.name, avatar: group.photo100)
+                GroupModel(value: [group.name, group.photo100])
             })
-            self?.tableView.reloadData()
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                self?.refreshControlGroup.endRefreshing()
+            }
         }
-        refreshControlGroup.endRefreshing()
     }
     
     @objc private func refresh() {
@@ -89,20 +91,23 @@ class GroupTableVC: UITableViewController {
     }
 }
 
-extension GroupTableVC: SearchTextFieldDelegate {
+extension GroupTableVC: SearchTextFieldDelegate, UISearchControllerDelegate {
     
     func didChangeSearch(_ text: String?) {
         
         guard let text = text else { return }
         
+        isFiltred = text != "" ? true : false
+        
         fetcher.getGroupsSearch(from: text, completion: { [weak self] groups in
             self?.filtredGroups = groups.items.compactMap({ group in
-                GroupModel(name: group.name, avatar: group.photo100)
+                GroupModel(value: [group.name, group.photo100])
             })
+            DispatchQueue.main.async {
+                self?.tableView.reloadData()
+                self?.refreshControlGroup.endRefreshing()
+            }
         })
-        
-        isFiltred = text != "" ? true : false
-        tableView.reloadData()
     }
 }
 

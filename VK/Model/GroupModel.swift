@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import RealmSwift
 
-struct GroupModel {
+class GroupModel: Object {
     
-    let name: String
-    let avatar: String
+    @objc dynamic var name: String = ""
+    @objc dynamic var avatar: String = ""
 }
