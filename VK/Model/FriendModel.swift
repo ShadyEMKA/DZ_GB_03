@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import RealmSwift
 
-struct FriendModel {
+class FriendModel: Object {
     
-    let name: String
-    let avatar: String
-    let status: Int
-    let id: Int
+    @objc dynamic var name: String = ""
+    @objc dynamic var avatar: String = ""
+    @objc dynamic var status: Int = 0
+    @objc dynamic var id: Int = 0
 }

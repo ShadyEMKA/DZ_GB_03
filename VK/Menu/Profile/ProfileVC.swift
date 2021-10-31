@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RealmSwift
 
 class ProfileVC: UIViewController {
 
@@ -16,14 +17,21 @@ class ProfileVC: UIViewController {
     @IBOutlet weak var countGroupsLabel: UILabel!
     @IBOutlet weak var countPhotoLabel: UILabel!
     
+    private let localeDataManager = LocaleDataManager()
     private let fetcher = NetworkDataFetcher()
-    private var user: UserModel?
+    private var userLocale: Results<UserModel>!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         configureAvatar()
         loadingUser()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateUserLocale()
     }
     
     private func configureAvatar() {
@@ -38,19 +46,23 @@ class ProfileVC: UIViewController {
     }
     
     private func loadingUser() {
-        fetcher.getUsers { user in
-            self.user = UserModel(name: user.fullName,
-                                  avatar: user.photo200,
-                                  countFriends: user.counters.friends,
-                                  coumtGroups: user.counters.groups,
-                                  countPhoto: user.counters.photos)
-            self.configure()
+        fetcher.getUsers { [weak self] user in
+            guard let self = self else { return }
+            let user = UserModel(value: [user.fullName, user.photo200, user.counters.friends, user.counters.groups, user.counters.photos])
+            DispatchQueue.main.async {
+                self.localeDataManager.save(object: user)
+                self.updateUserLocale()
+            }
             }
         }
     
-    private func configure() {
-        guard let user = user else {
-            return }
+    private func updateUserLocale() {
+        self.userLocale = localeDataManager.load(type: UserModel.self)
+        guard let user = userLocale.first else { return }
+        configure(for: user)
+    }
+    
+    private func configure(for user: UserModel) {
         self.avatarImage.set(urlString: user.avatar)
         self.nameLabel.text = user.name
         self.countFriendsLabel.text = String(user.countFriends)

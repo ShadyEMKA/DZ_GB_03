@@ -6,12 +6,13 @@
 //
 
 import Foundation
+import RealmSwift
 
-struct UserModel {
+class UserModel: Object {
     
-    let name: String
-    let avatar: String
-    let countFriends: Int
-    let coumtGroups: Int
-    let countPhoto: Int
+    @objc dynamic var name: String = ""
+    @objc dynamic var avatar: String = ""
+    @objc dynamic var countFriends: Int = 0
+    @objc dynamic var coumtGroups: Int = 0
+    @objc dynamic var countPhoto: Int = 0
 }

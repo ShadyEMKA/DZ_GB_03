@@ -36,7 +36,9 @@ class PhotoFriendVC: UIViewController {
             self?.photos = response.items.compactMap({ photos in
                 return photos.sizes[2].url
             })
-            self?.collectionView.reloadData()
+            DispatchQueue.main.async {
+                self?.collectionView.reloadData()
+            }
         }
     }
 }

@@ -52,7 +52,7 @@ final class NetworkDataFetcher {
     
     func getGroupsSearch(from text: String, completion: @escaping (GroupsResponse) -> Void) {
         
-        let param = ["q": text, "count": "100"]
+        let param = ["q": text, "count": "50"]
         networkManager.getRequest(from: API.groupsSearch, param: param) { data, error in
             if let error = error {
                 print(error.localizedDescription)
