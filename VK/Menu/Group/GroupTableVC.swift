@@ -6,11 +6,13 @@
 //
 
 import UIKit
+import RealmSwift
 
 class GroupTableVC: UITableViewController {
     
     private let fetcher = NetworkDataFetcher()
-    private var groups = [GroupModel]()
+    private let localeDataManager = LocaleDataManager()
+    private var groups: Results<GroupModel>!
     private var filtredGroups = [GroupModel]()
     private var isFiltred: Bool = false
     
@@ -34,6 +36,12 @@ class GroupTableVC: UITableViewController {
         loadingGroups()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateGroupsLocale()
+    }
+    
     private func configure() {
         
         tableView.addSubview(refreshControlGroup)
@@ -44,24 +52,42 @@ class GroupTableVC: UITableViewController {
         navigationItem.titleView = titleView
     }
     
-    private func loadingGroups() {
-        
-        fetcher.getGroups { [weak self] response in
-            self?.groups = response.items.compactMap({ group in
-                GroupModel(value: [group.name, group.photo100])
-            })
-            DispatchQueue.main.async {
-                self?.tableView.reloadData()
-                self?.refreshControlGroup.endRefreshing()
-            }
-        }
-    }
-    
     @objc private func refresh() {
         
         loadingGroups()
     }
+    
+    private func updateGroupsLocale() {
+        self.groups = localeDataManager.load(type: GroupModel.self)
+        refreshControlGroup.endRefreshing()
+        tableView.reloadData()
+    }
+}
 
+// MARK: - Loading groups from the network and saving to the database
+
+extension GroupTableVC {
+    
+    private func loadingGroups() {
+        
+        fetcher.getGroups { [weak self] response in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                let groupsBD = response.items.compactMap { GroupModel(value: [$0.name, $0.photo100, $0.id]) }
+                if let oldGroupsBD = self.groups {
+                    self.localeDataManager.delete(object: oldGroupsBD)
+                }
+                self.localeDataManager.save(object: groupsBD)
+                self.updateGroupsLocale()
+            }
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource and UITableViewDelegate
+
+extension GroupTableVC {
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if isFiltred {

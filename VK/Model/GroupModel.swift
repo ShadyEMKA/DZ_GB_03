@@ -12,4 +12,5 @@ class GroupModel: Object {
     
     @objc dynamic var name: String = ""
     @objc dynamic var avatar: String = ""
+    @objc dynamic var id: Int = 0
 }
