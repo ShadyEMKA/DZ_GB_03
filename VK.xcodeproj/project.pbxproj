@@ -227,7 +227,6 @@
 		84B66D66271D8C810096EE85 /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				8429836726FB5B4C00F576E5 /* Constants.swift */,
 				84B66D68271D966E0096EE85 /* Session.swift */,
 				84E2F93C272054510000B767 /* API.swift */,
 				84E2F94227205FA80000B767 /* NetworkManager.swift */,
@@ -262,6 +261,7 @@
 		84E2F94427206AB60000B767 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
+				8429836726FB5B4C00F576E5 /* Constants.swift */,
 				84E2F94527206AD10000B767 /* WebImageView.swift */,
 				84E2F94D2720871C0000B767 /* TitleView.swift */,
 				84E2F94F2720878F0000B767 /* SearchTextField.swift */,

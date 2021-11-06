@@ -6,12 +6,14 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FriendsTableVC: UIViewController {
     
     @IBOutlet weak private var tableView: UITableView!
     
     private let fetcher = NetworkDataFetcher()
+    private let localeDataManager = LocaleDataManager()
     private var friendsAndLitters = [Character: [FriendModel]]()
     private var litters: [Character] {
         var array = [Character]()
@@ -21,6 +23,8 @@ class FriendsTableVC: UIViewController {
         let sortedArray = array.sorted { $0 < $1 }
         return sortedArray
     }
+    private var friends: Results<FriendModel>!
+    
     
     lazy private var refreshControlFriends: UIRefreshControl = {
         let refreshControlFriends = UIRefreshControl()
@@ -35,26 +39,17 @@ class FriendsTableVC: UIViewController {
         loadingFriends()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        updateFriendsLocale()
+    }
+    
     private func configure() {
         
         tableView.addSubview(refreshControlFriends)
         tableView.separatorStyle = .none
         tableView.contentInset.top = CGFloat(10)
-    }
-    
-    private func loadingFriends() {
-        
-        fetcher.getFriends { [weak self] response in
-            guard let self = self else { return }
-            let friends = response.items.compactMap { friend in
-                FriendModel(value: [friend.fullName, friend.photo100, friend.online, friend.id])
-            }
-            self.friendsAndLitters = self.littersFromArray(array: friends)
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.refreshControlFriends.endRefreshing()
-            }
-        }
     }
     
     @objc private func refresh() {
@@ -74,7 +69,36 @@ class FriendsTableVC: UIViewController {
         }
         return result
     }
+    
+    private func updateFriendsLocale() {
+        self.friends = localeDataManager.load(type: FriendModel.self)
+        self.friendsAndLitters = littersFromArray(array: Array(self.friends))
+        self.refreshControlFriends.endRefreshing()
+        tableView.reloadData()
+    }
 }
+
+//MARK: - Loading friends from the network and saving to the database
+
+extension FriendsTableVC {
+    
+    private func loadingFriends() {
+        
+        fetcher.getFriends { [weak self] response in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                let friendsBD = response.items.compactMap { FriendModel(value: [$0.fullName, $0.photo100, $0.online, $0.id]) }
+                if let oldFriendsBD = self.friends {
+                    self.localeDataManager.delete(object: oldFriendsBD)
+                }
+                self.localeDataManager.save(object: friendsBD)
+                self.updateFriendsLocale()
+            }
+        }
+    }
+}
+
+// MARK: - UITableViewDataSource and UITableViewDelegate
 
 extension FriendsTableVC: UITableViewDelegate, UITableViewDataSource {
     
@@ -94,7 +118,7 @@ extension FriendsTableVC: UITableViewDelegate, UITableViewDataSource {
         
         if let newVC = cell as? FriendsTableViewCell {
             let friend = friendsAndLitters[litters[indexPath.section]]![indexPath.row]
-            newVC.set(avatar: friend.avatar, name: friend.name, status: friend.status)
+            newVC.set(avatar: friend.avatar, name: friend.name, status: friend.status )
         }
     }
     

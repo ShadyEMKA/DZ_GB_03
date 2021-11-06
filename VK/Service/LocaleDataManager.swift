@@ -12,7 +12,7 @@ class LocaleDataManager {
     
     private var realm = try! Realm()
     
-    func save<T: Object>(object: T) {
+    func save<T: Object>(object: [T]) {
         try! realm.write({
             realm.add(object)
         })
@@ -20,5 +20,11 @@ class LocaleDataManager {
     
     func load<T: Object>(type: T.Type) -> Results<T> {
         return realm.objects(type.self)
+    }
+    
+    func delete<T: Object>(object: Results<T>) {
+        try! realm.write({
+            realm.delete(object)
+        })
     }
 }

@@ -25,12 +25,12 @@ class ProfileVC: UIViewController {
         super.viewDidLoad()
         
         configureAvatar()
-        loadingUser()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        loadingUser()
         updateUserLocale()
     }
     
@@ -50,7 +50,10 @@ class ProfileVC: UIViewController {
             guard let self = self else { return }
             let user = UserModel(value: [user.fullName, user.photo200, user.counters.friends, user.counters.groups, user.counters.photos])
             DispatchQueue.main.async {
-                self.localeDataManager.save(object: user)
+                if let userOld = self.userLocale {
+                    self.localeDataManager.delete(object: userOld)
+                }
+                self.localeDataManager.save(object: [user])
                 self.updateUserLocale()
             }
             }
