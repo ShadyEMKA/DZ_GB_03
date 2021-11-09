@@ -15,6 +15,7 @@ class GroupTableVC: UITableViewController {
     private var groups: Results<GroupModel>!
     private var filtredGroups = [GroupModel]()
     private var isFiltred: Bool = false
+    private var token: NotificationToken?
     
     lazy private var refreshControlGroup: UIRefreshControl = {
         let refreshControlGroup = UIRefreshControl()
@@ -34,11 +35,6 @@ class GroupTableVC: UITableViewController {
 
         configure()
         loadingGroups()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
         updateGroupsLocale()
     }
     
@@ -58,9 +54,23 @@ class GroupTableVC: UITableViewController {
     }
     
     private func updateGroupsLocale() {
-        self.groups = localeDataManager.load(type: GroupModel.self)
-        refreshControlGroup.endRefreshing()
-        tableView.reloadData()
+        groups = localeDataManager.load(type: GroupModel.self)
+        token = groups.observe { [weak self] change in
+            guard let tableView = self?.tableView else { return }
+            switch change {
+            case .initial(_):
+                tableView.reloadData()
+            case .update(_, deletions: let deletions, insertions: let insertions, modifications: let modifications):
+                tableView.beginUpdates()
+                tableView.deleteRows(at: deletions.map {IndexPath(row: $0, section: 0)}, with: .automatic)
+                tableView.insertRows(at: insertions.map {IndexPath(row: $0, section: 0)}, with: .automatic)
+                tableView.reloadRows(at: modifications.map {IndexPath(row: $0, section: 0)}, with: .automatic)
+                tableView.endUpdates()
+            case .error(let error):
+                fatalError(error.localizedDescription)
+            }
+            self?.refreshControlGroup.endRefreshing()
+        }
     }
 }
 
@@ -78,7 +88,6 @@ extension GroupTableVC {
                     self.localeDataManager.delete(object: oldGroupsBD)
                 }
                 self.localeDataManager.save(object: groupsBD)
-                self.updateGroupsLocale()
             }
         }
     }
