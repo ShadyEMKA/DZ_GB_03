@@ -31,6 +31,8 @@
 		846E125026FE391B0099E362 /* News.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 846E124F26FE391B0099E362 /* News.storyboard */; };
 		846E125326FE39330099E362 /* NewsTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 846E125126FE39330099E362 /* NewsTableViewCell.swift */; };
 		846E125426FE39330099E362 /* NewsTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 846E125226FE39330099E362 /* NewsTableViewCell.xib */; };
+		848260BB274133E1008D07EF /* FirebaseDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848260BA274133E1008D07EF /* FirebaseDB.swift */; };
+		848260BF27413A0F008D07EF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 848260BE27413A0F008D07EF /* GoogleService-Info.plist */; };
 		84B66D69271D966E0096EE85 /* Session.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B66D68271D966E0096EE85 /* Session.swift */; };
 		84E1DBA72726C45900AD9E44 /* PhotoFriendVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84E1DBA62726C45900AD9E44 /* PhotoFriendVC.swift */; };
 		84E1DBA92726C46E00AD9E44 /* PhotoFriend.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 84E1DBA82726C46E00AD9E44 /* PhotoFriend.storyboard */; };
@@ -78,6 +80,8 @@
 		846E124F26FE391B0099E362 /* News.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = News.storyboard; sourceTree = "<group>"; };
 		846E125126FE39330099E362 /* NewsTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsTableViewCell.swift; sourceTree = "<group>"; };
 		846E125226FE39330099E362 /* NewsTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewsTableViewCell.xib; sourceTree = "<group>"; };
+		848260BA274133E1008D07EF /* FirebaseDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseDB.swift; sourceTree = "<group>"; };
+		848260BE27413A0F008D07EF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		84B66D68271D966E0096EE85 /* Session.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Session.swift; sourceTree = "<group>"; };
 		84E1DBA62726C45900AD9E44 /* PhotoFriendVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFriendVC.swift; sourceTree = "<group>"; };
 		84E1DBA82726C46E00AD9E44 /* PhotoFriend.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = PhotoFriend.storyboard; sourceTree = "<group>"; };
@@ -220,6 +224,7 @@
 				8402709126F901AD006ACF44 /* Assets.xcassets */,
 				8402709326F901AD006ACF44 /* LaunchScreen.storyboard */,
 				8402709626F901AD006ACF44 /* Info.plist */,
+				848260BE27413A0F008D07EF /* GoogleService-Info.plist */,
 			);
 			path = App;
 			sourceTree = "<group>";
@@ -232,6 +237,7 @@
 				84E2F94227205FA80000B767 /* NetworkManager.swift */,
 				84E2F93E272054BB0000B767 /* NetworkDataFetcher.swift */,
 				8402EA6E2729BED0003359DB /* LocaleDataManager.swift */,
+				848260BA274133E1008D07EF /* FirebaseDB.swift */,
 				84E1DBB22726E3E000AD9E44 /* Response */,
 			);
 			path = Service;
@@ -353,6 +359,7 @@
 				8402709226F901AD006ACF44 /* Assets.xcassets in Resources */,
 				840270A826F9203F006ACF44 /* Profile.storyboard in Resources */,
 				8402709026F901AB006ACF44 /* Auth.storyboard in Resources */,
+				848260BF27413A0F008D07EF /* GoogleService-Info.plist in Resources */,
 				840270A126F91F21006ACF44 /* Menu.storyboard in Resources */,
 				846E125426FE39330099E362 /* NewsTableViewCell.xib in Resources */,
 			);
@@ -425,6 +432,7 @@
 				840270A626F92034006ACF44 /* ProfileVC.swift in Sources */,
 				842EDB0226FB709600048E67 /* FriendModel.swift in Sources */,
 				8402708B26F901AB006ACF44 /* SceneDelegate.swift in Sources */,
+				848260BB274133E1008D07EF /* FirebaseDB.swift in Sources */,
 				8402709F26F91F10006ACF44 /* MenuTabBarVC.swift in Sources */,
 				84E1DBAD2726CA1C00AD9E44 /* PhotosResponse.swift in Sources */,
 				84E2F94327205FA80000B767 /* NetworkManager.swift in Sources */,

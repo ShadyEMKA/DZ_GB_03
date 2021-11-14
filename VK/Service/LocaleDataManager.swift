@@ -27,4 +27,11 @@ class LocaleDataManager {
             realm.delete(object)
         })
     }
+    
+    func update<T: Object>(type: T.Type, property: String, oldValue: Any, newValue: Any) {
+        guard let object = load(type: type).filter("\(property) == %@", oldValue).first else { return }
+        try! realm.write({
+            object.setValuesForKeys([property: newValue])
+        })
+    }
 }

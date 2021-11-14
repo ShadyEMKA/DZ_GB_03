@@ -7,5 +7,6 @@ target 'VK' do
 
   # Pods for VK
   pod 'RealmSwift'
+  pod 'Firebase/Database'
 
 end

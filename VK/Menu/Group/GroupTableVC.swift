@@ -84,6 +84,7 @@ extension GroupTableVC {
             guard let self = self else { return }
             DispatchQueue.main.async {
                 let groupsBD = response.items.compactMap { GroupModel(value: [$0.name, $0.photo100, $0.id]) }
+                groupsBD.forEach { FirebaseDB.shared.save(data: $0) }
                 if let oldGroupsBD = self.groups {
                     self.localeDataManager.delete(object: oldGroupsBD)
                 }

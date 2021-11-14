@@ -93,7 +93,7 @@ extension AuthVC: WKNavigationDelegate {
         
         guard let token = params["access_token"],
               let userId = params["user_id"] else { return }
-        
+        print(token)
         Session.shared.token = token
         Session.shared.userId = Int(userId)
         userDefaults.set(Date(), forKey: "tokenDate")
